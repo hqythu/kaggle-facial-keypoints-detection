@@ -47,3 +47,4 @@ class Model():
                 cost += [self.train(train_x[start:end], train_y[start:end])]
             accuracy = np.mean(np.argmax(test_y, axis=1) == self.predict(test_x))
             print 'cost:', np.mean(cost), ',', 'accuracy:', accuracy
+
