@@ -1,4 +1,5 @@
 from model import Model
+import scipy.io as sio
 import layers
 import load
 
@@ -18,9 +19,16 @@ def test_cnn():
     model.train_model(train_x, train_y, test_x, test_y)
 
 def keypoint_detection():
-    (train_x, train_y, text_x) = load.csv()
-    print 'load complete'
-    model = Model(0.1, 100, 10)
+    try:
+        data = sio.loadmat('data.mat')
+    except:
+        load.csv()
+        data = sio.loadmat('data.mat')
+        
+    train_x = data['train_x']
+    train_y = data['train_y']
+    test_x = data['test_x']
+    model = Model(0.1, 100, 100)
     model.add_layer(layers.ReshapeLayer(1, 96, 96))
     model.add_layer(layers.ConvolutionLayer((5, 5), 1, 1, 0.01, layers.rectify))
     model.add_layer(layers.PoolingLayer((2, 2))) # 46 * 46 * 4
@@ -39,4 +47,3 @@ def keypoint_detection():
 
 if __name__ == '__main__':
     keypoint_detection()
-

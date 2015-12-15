@@ -57,9 +57,6 @@ def csv():
 
     f.close()
 
-    return (
-        train_x,
-        train_y,
-        test_x
-    )
-
+    sio.savemat('data.mat', {'train_x': train_x,
+                             'train_y': train_y,
+                             'test_x' : test_x} ) 

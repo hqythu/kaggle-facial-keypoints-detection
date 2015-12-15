@@ -18,7 +18,7 @@ def softmax(X):
 
 
 def EuclideanLoss(output, label):
-    return T.mean(T.sqr(T.dot(output - label, T.neq(label, -1))))
+    return T.mean(T.sqr(T.dot(output - label, 1 * (label != -1) )))
 
 
 def CrossEntropyLoss(output, label):
