@@ -28,7 +28,7 @@ class Model():
 
     def build(self):
         self.cost = self.loss_function(self.output, self.label)
-        self.label_predict = self.output#T.argmax(self.output, axis=1)
+        self.label_predict = self.output #T.argmax(self.output, axis=1)
         self.grad_params = [T.grad(self.cost, param) for param in self.params]
         updates = [(param, param - grad_param * self.learning_rate)
             for param, grad_param in zip(self.params, self.grad_params)]
@@ -47,8 +47,7 @@ class Model():
             for start, end in zip(range(0, len(train_x), self.batch_size),
                 range(self.batch_size, len(train_x), self.batch_size)):
                 cost += [self.train(train_x[start:end], train_y[start:end])]
-            tmp = (self.predict(teX) - teY) * (teY == -1)
+            tmp = (self.predict(teX) - teY) * (teY != -1)
             accuracy = np.mean( np.sqrt(tmp * tmp) ) 
             # accuracy = np.mean(np.argmax(test_y, axis=1) == self.predict(test_x))
             print 'cost:', np.mean(cost), ',', 'accuracy:', accuracy
-

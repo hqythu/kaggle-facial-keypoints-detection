@@ -60,3 +60,6 @@ def csv():
     sio.savemat('data.mat', {'train_x': train_x,
                              'train_y': train_y,
                              'test_x' : test_x} ) 
+
+if __name__ == '__main__':
+	csv()
