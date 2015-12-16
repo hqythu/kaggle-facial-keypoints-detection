@@ -20,10 +20,11 @@ def keypoint_detection():
     train_y = (train_y - 48) / 48.0
     test_x = test_x / 255.0
 
-    model = Model(0.01, 100, 400)
+    model = Model(1, 100, 400)
 
-    model.add_layer(layers.FullConnectedLayer(9216, 100, 0.01, layers.rectify))
-    model.add_layer(layers.FullConnectedLayer(100, 30, 0.01, layers.rectify))
+    model.add_layer(layers.FullConnectedLayer(9216, 256, 0, layers.rectify))
+    model.add_layer(layers.FullConnectedLayer(256, 100, 0, layers.rectify))
+    model.add_layer(layers.FullConnectedLayer(100, 30, 0, layers.rectify))
     model.set_loss_function(layers.EuclideanLoss)
 
     model.build()
