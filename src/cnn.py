@@ -28,6 +28,12 @@ def keypoint_detection():
     train_x = data['train_x']
     train_y = data['train_y']
     test_x = data['test_x']
+
+    # data normalization
+    train_x = train_x / 255.0
+    train_y = (train_y - 48) / 48.0
+    test_x = test_x / 255.0
+
     model = Model(0.1, 100, 40)
     model.add_layer(layers.ReshapeLayer(1, 96, 96))
     model.add_layer(layers.ConvolutionLayer((5, 5), 1, 1, 0.01, layers.rectify))

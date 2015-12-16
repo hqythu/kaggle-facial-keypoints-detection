@@ -15,10 +15,15 @@ def keypoint_detection():
     train_y = data['train_y']
     test_x = data['test_x']
 
-    model = Model(0.1, 100, 100)
+    # data normalization
+    train_x = train_x / 255.0
+    train_y = (train_y - 48) / 48.0
+    test_x = test_x / 255.0
 
-    model.add_layer(layers.FullConnectedLayer(9216, 100, 0.001, layers.rectify))
-    model.add_layer(layers.FullConnectedLayer(100, 30, 0.001, layers.rectify))
+    model = Model(0.01, 100, 400)
+
+    model.add_layer(layers.FullConnectedLayer(9216, 100, 0.01, layers.rectify))
+    model.add_layer(layers.FullConnectedLayer(100, 30, 0.01, layers.rectify))
     model.set_loss_function(layers.EuclideanLoss)
 
     model.build()

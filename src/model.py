@@ -53,7 +53,7 @@ class Model():
             # tmp = (self.predict(teX) - teY) * (teY != -1)
             accuracy = np.mean( np.sqrt(tmp * tmp) ) 
             # accuracy = np.mean(np.argmax(test_y, axis=1) == self.predict(test_x))
-            print 'cost:', np.mean(cost), ',', 'accuracy:', accuracy
+            print 'cost:', np.mean(cost), ',', 'accuracy:', accuracy * 48
 
     def save_test_result(self, test_x):
         dic = {
@@ -90,6 +90,7 @@ class Model():
               }
 
         answer = self.predict(test_x)
+        answer = answer * 48.0 + 48
         csvfile = file('result.csv', 'wb')
         writer = csv.writer(csvfile)
         writer.writerow(['RowId', 'Location'])
