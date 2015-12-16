@@ -28,7 +28,7 @@ def keypoint_detection():
     train_x = data['train_x']
     train_y = data['train_y']
     test_x = data['test_x']
-    model = Model(0.1, 100, 100)
+    model = Model(0.1, 100, 40)
     model.add_layer(layers.ReshapeLayer(1, 96, 96))
     model.add_layer(layers.ConvolutionLayer((5, 5), 1, 1, 0.01, layers.rectify))
     model.add_layer(layers.PoolingLayer((2, 2))) # 46 * 46 * 4
@@ -42,7 +42,7 @@ def keypoint_detection():
     model.set_loss_function(layers.EuclideanLoss)
     model.build()
     print 'build model complete'
-    model.train_model(train_x, train_y, train_x, train_y)
+    model.train_model(train_x, train_y, test_x)
 
 
 if __name__ == '__main__':

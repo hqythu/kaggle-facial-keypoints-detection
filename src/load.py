@@ -42,8 +42,6 @@ def csv():
         except:
             j = j
 
-    print j
-
     f.close()
     f = file('test.csv')
     f.readline()
