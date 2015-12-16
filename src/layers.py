@@ -113,4 +113,3 @@ class DropoutLayer(object):
         if self.p_drop > 0:
             retain_p = 1 - self.p_drop
         return self.output
-
