@@ -2,7 +2,7 @@ import csv
 import theano
 from theano import tensor as T
 from theano import function
-from switch import switch
+import switch
 import numpy as np
 
 from load import mnist
@@ -40,7 +40,7 @@ class Model():
         self.predict = function([self.input], self.label_predict,
             allow_input_downcast=True)
 
-    def train_model(self, train_x, train_y, test_x):
+    def train_model(self, train_x, train_y):
         teX = np.asarray(train_x)
         teY = np.asarray(train_y)
         for i in range(self.epoch_time):
@@ -55,6 +55,7 @@ class Model():
             # accuracy = np.mean(np.argmax(test_y, axis=1) == self.predict(test_x))
             print 'cost:', np.mean(cost), ',', 'accuracy:', accuracy
 
+    def save_test_result(self, test_x):
         dic = {
                 'left_eye_center_x'         :  0,
                 'left_eye_center_y'         :  1,
@@ -101,5 +102,3 @@ class Model():
             writer.writerow([ int(text[i][0]), answer[ int(text[i][1])-1 ][ dic[text[i][2]] ] ])
 
         csvfile.close()
-
-        return 

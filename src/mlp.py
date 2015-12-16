@@ -1,40 +1,31 @@
 from model import Model
+import scipy.io as sio
 import layers
 import load
 
 
-def test_mlp():
-    (train_x, train_y, test_x, test_y) = load.mnist('mnist.mat')
+def keypoint_detection():
+    try:
+        data = sio.loadmat('data.mat')
+    except:
+        load.csv()
+        data = sio.loadmat('data.mat')
+        
+    train_x = data['train_x']
+    train_y = data['train_y']
+    test_x = data['test_x']
+
     model = Model(0.1, 100, 100)
 
-    # Sigmoid Two Hidden Euclidean
-    # model.add_layer(layers.FullConnectedLayer(784, 256, 0.1, layers.sigmoid))
-    # model.add_layer(layers.FullConnectedLayer(256, 64, 0.1, layers.sigmoid))
-    # model.add_layer(layers.FullConnectedLayer(64, 10, 0.1, layers.sigmoid))
-    # model.set_loss_function(layers.EuclideanLoss)
-
-    # Relu Two Hidden Euclidean
-    # model.add_layer(layers.FullConnectedLayer(784, 256, 0.01, layers.rectify))
-    # model.add_layer(layers.FullConnectedLayer(256, 64, 0.01, layers.rectify))
-    # model.add_layer(layers.FullConnectedLayer(64, 10, 0.01, layers.rectify))
-    # model.set_loss_function(layers.EuclideanLoss)
-
-    # Relu One Hidden Softmax
-    # model.add_layer(layers.FullConnectedLayer(784, 256, 0.01, layers.rectify))
-    # model.add_layer(layers.FullConnectedLayer(256, 10, 0.01, layers.rectify))
-    # model.add_layer(layers.SoftmaxLayer())
-    # model.set_loss_function(layers.CrossEntropyLoss)
-
-    # Relu Two Hidden Softmax
-    model.add_layer(layers.FullConnectedLayer(784, 256, 0.01, layers.rectify))
-    model.add_layer(layers.FullConnectedLayer(256, 64, 0.01, layers.rectify))
-    model.add_layer(layers.FullConnectedLayer(64, 10, 0.01, layers.rectify))
-    model.add_layer(layers.SoftmaxLayer())
-    model.set_loss_function(layers.CrossEntropyLoss)
+    model.add_layer(layers.FullConnectedLayer(9216, 100, 0.001, layers.rectify))
+    model.add_layer(layers.FullConnectedLayer(100, 30, 0.001, layers.rectify))
+    model.set_loss_function(layers.EuclideanLoss)
 
     model.build()
-    model.train_model(train_x, train_y, test_x, test_y)
+    print 'build model complete'
+    model.train_model(train_x, train_y)
+    model.save_test_result(test_x)
 
 
 if __name__ == '__main__':
-    test_mlp()
+    keypoint_detection()

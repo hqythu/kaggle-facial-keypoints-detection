@@ -42,7 +42,8 @@ def keypoint_detection():
     model.set_loss_function(layers.EuclideanLoss)
     model.build()
     print 'build model complete'
-    model.train_model(train_x, train_y, test_x)
+    model.train_model(train_x, train_y)
+    model.save_test_result(test_x)
 
 
 if __name__ == '__main__':
