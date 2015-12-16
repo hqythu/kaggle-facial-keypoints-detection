@@ -29,19 +29,20 @@ def csv():
     train_x = np.zeros((len(text), 9216))
     train_y = np.zeros((len(text), 30))
 
-    for i in range(len(text)):
+    i = 0
+    j = 0
+    while i < len(text):
         pic_raw = text[i][30].replace(" ", ",")
         pic = np.array( eval('['+pic_raw+']') )
-        train_x[i] = pic
+        i = i + 1
         try:
-            train_y[i] = np.array( text[i][0:30] )
+            train_y[j] = np.array( text[i][0:30] )
+            train_x[j] = pic
+            j = j + 1
         except:
-            for j in range(30):
-                if text[i][j] == '':
-                    train_y[i][j] = -1
-                else:
-                    train_y[i][j] = text[i][j]
+            j = j
 
+    print j
 
     f.close()
     f = file('test.csv')
@@ -57,6 +58,6 @@ def csv():
 
     f.close()
 
-    sio.savemat('data.mat', {'train_x': train_x,
-                             'train_y': train_y,
+    sio.savemat('data.mat', {'train_x': train_x[0:j],
+                             'train_y': train_y[0:j],
                              'test_x' : test_x} ) 
