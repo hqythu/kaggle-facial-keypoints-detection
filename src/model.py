@@ -38,8 +38,8 @@ class Model():
         self.params_update = [theano.shared(param.get_value() * 0) for param in self.params]
         updates = [(param, param - self.learning_rate * param_update)
             for param, param_update in zip(self.params, self.params_update)]
-        updates += [(param_update, param_update * self.momentum + 
-            (1.0 - self.momentum) * T.grad(self.cost, param)) 
+        updates += [(param_update, param_update * self.momentum +
+            (1.0 - self.momentum) * T.grad(self.cost, param))
             for param, param_update in zip(self.params, self.params_update)]
 
         self.train = function([self.input, self.label], self.cost,
@@ -47,20 +47,17 @@ class Model():
         self.predict = function([self.input], self.label_predict,
             allow_input_downcast=True)
 
-    def train_model(self, train_x, train_y):
-        teX = np.asarray(train_x)
-        teY = np.asarray(train_y)
+    def train_model(self, train_x, train_y, valid_x, valid_y):
         for i in range(self.epoch_time):
             print 'epoch:', i+1, ',',
             cost = []
             for start, end in zip(range(0, len(train_x), self.batch_size),
                 range(self.batch_size, len(train_x), self.batch_size)):
                 cost += [self.train(train_x[start:end], train_y[start:end])]
-            tmp = self.predict(teX) - teY
-            # tmp = (self.predict(teX) - teY) * (teY != -1)
+            tmp = self.predict(valid_x) - valid_y
             accuracy = np.sqrt(np.mean(tmp * tmp))
-            # accuracy = np.mean(np.argmax(test_y, axis=1) == self.predict(test_x))
-            print 'cost:', np.mean(cost), ',', 'accuracy:', accuracy * 48
+            print 'training cost:', np.mean(cost), ',', 'validation cost:', accuracy, \
+                ',', 'accuracy:', accuracy * 48
 
     def save_test_result(self, test_x):
         dic = {
