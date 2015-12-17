@@ -29,6 +29,7 @@ def CrossEntropyLoss(output, label):
 class SoftmaxLayer(object):
     def __init__(self):
         self.params = []
+        self.regularization = []
 
     def get_output(self, input):
         self.input = input
@@ -45,6 +46,7 @@ class FullConnectedLayer(object):
         self.w = theano.shared(w_values)
         self.b = theano.shared(b_values)
         self.params = [self.w, self.b]
+        self.regularization = [T.mean(T.sqr(self.w))]
         self.activation = activation
 
     def get_output(self, input):
@@ -60,6 +62,7 @@ class ReshapeLayer(object):
         self.image_width = image_width
         self.image_height = image_height
         self.params = []
+        self.regularization = []
 
     def get_output(self, input):
         self.input = input
@@ -79,6 +82,7 @@ class ConvolutionLayer(object):
         self.w = theano.shared(w_values)
         self.b = theano.shared(b_values)
         self.params = [self.w, self.b]
+        self.regularization = [T.mean(T.sqr(self.w))]
         self.activation = activation
 
     def get_output(self, input):
@@ -91,6 +95,7 @@ class ConvolutionLayer(object):
 class PoolingLayer(object):
     def __init__(self, kernel_size, activation=None):
         self.params = []
+        self.regularization = []
         self.kernel_size = kernel_size
         self.activation = activation
 

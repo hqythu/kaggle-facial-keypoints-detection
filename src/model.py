@@ -9,21 +9,24 @@ from load import mnist
 
 
 class Model():
-    def __init__(self, learning_rate, momentum, batch_size, epoch_time):
+    def __init__(self, learning_rate, momentum, regularization, batch_size, epoch_time):
         self.layers = []
         self.params = []
+        self.regularization_param = []
         self.input = T.fmatrix()
         self.output = self.input
         self.label = T.fmatrix()
 
         self.learning_rate = learning_rate
         self.momentum = momentum
+        self.regularization = regularization
         self.batch_size = batch_size
         self.epoch_time = epoch_time
 
     def add_layer(self, layer):
         self.layers.append(layer)
         self.params += layer.params
+        self.regularization_param += layer.regularization
         self.output = layer.get_output(self.output)
 
     def set_loss_function(self, loss_function):
@@ -31,6 +34,9 @@ class Model():
 
     def build(self):
         self.cost = self.loss_function(self.output, self.label)
+        for reg in self.regularization_param:
+            self.cost = self.cost + self.regularization * reg
+
         self.label_predict = self.output #T.argmax(self.output, axis=1)
         self.grad_params = [T.grad(self.cost, param) for param in self.params]
         self.last_delta = T.tensor4()
@@ -55,9 +61,9 @@ class Model():
                 range(self.batch_size, len(train_x), self.batch_size)):
                 cost += [self.train(train_x[start:end], train_y[start:end])]
             tmp = self.predict(valid_x) - valid_y
-            accuracy = np.sqrt(np.mean(tmp * tmp))
+            accuracy = np.mean(tmp * tmp)
             print 'training cost:', np.mean(cost), ',', 'validation cost:', accuracy, \
-                ',', 'accuracy:', accuracy * 48
+                ',', 'accuracy:', np.sqrt(accuracy) * 48
 
     def save_test_result(self, test_x):
         dic = {
