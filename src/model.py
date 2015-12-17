@@ -34,8 +34,13 @@ class Model():
         self.label_predict = self.output #T.argmax(self.output, axis=1)
         self.grad_params = [T.grad(self.cost, param) for param in self.params]
         self.last_delta = T.tensor4()
-        updates = [(param, param - grad_param * self.learning_rate)
-            for param, grad_param in zip(self.params, self.grad_params)]
+
+        self.params_update = [theano.shared(param.get_value() * 0) for param in self.params]
+        updates = [(param, param - self.learning_rate * param_update)
+            for param, param_update in zip(self.params, self.params_update)]
+        updates += [(param_update, param_update * self.momentum + 
+            (1.0 - self.momentum) * T.grad(self.cost, param)) 
+            for param, param_update in zip(self.params, self.params_update)]
 
         self.train = function([self.input, self.label], self.cost,
             updates=updates, allow_input_downcast=True)
