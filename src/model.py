@@ -9,7 +9,7 @@ from load import mnist
 
 
 class Model():
-    def __init__(self, learning_rate, batch_size, epoch_time):
+    def __init__(self, learning_rate, momentum, batch_size, epoch_time):
         self.layers = []
         self.params = []
         self.input = T.fmatrix()
@@ -17,6 +17,7 @@ class Model():
         self.label = T.fmatrix()
 
         self.learning_rate = learning_rate
+        self.momentum = momentum
         self.batch_size = batch_size
         self.epoch_time = epoch_time
 
@@ -32,6 +33,7 @@ class Model():
         self.cost = self.loss_function(self.output, self.label)
         self.label_predict = self.output #T.argmax(self.output, axis=1)
         self.grad_params = [T.grad(self.cost, param) for param in self.params]
+        self.last_delta = T.tensor4()
         updates = [(param, param - grad_param * self.learning_rate)
             for param, grad_param in zip(self.params, self.grad_params)]
 
@@ -51,7 +53,7 @@ class Model():
                 cost += [self.train(train_x[start:end], train_y[start:end])]
             tmp = self.predict(teX) - teY
             # tmp = (self.predict(teX) - teY) * (teY != -1)
-            accuracy = np.mean( np.sqrt(tmp * tmp) ) 
+            accuracy = np.sqrt(np.mean(tmp * tmp))
             # accuracy = np.mean(np.argmax(test_y, axis=1) == self.predict(test_x))
             print 'cost:', np.mean(cost), ',', 'accuracy:', accuracy * 48
 
