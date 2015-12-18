@@ -24,7 +24,7 @@ def keypoint_detection():
     except:
         load.csv()
         data = sio.loadmat('data.mat')
-        
+
     train_x = data['train_x']
     train_y = data['train_y']
     test_x = data['test_x']
@@ -34,7 +34,10 @@ def keypoint_detection():
     train_y = (train_y - 48) / 48.0
     test_x = test_x / 255.0
 
-    model = Model(0.1, 0.1, 100, 5)
+    train_x, valid_x = train_x[:-400], train_x[-400:]
+    train_y, valid_y = train_y[:-400], train_y[-400:]
+
+    model = Model(0.1, 0.9, 0.01, 100, 20)
     model.add_layer(layers.ReshapeLayer(1, 96, 96))
     model.add_layer(layers.ConvolutionLayer((5, 5), 2, 1, 0.01, layers.rectify))
     model.add_layer(layers.PoolingLayer((2, 2))) # 46 * 46 * 4
@@ -48,7 +51,7 @@ def keypoint_detection():
     model.set_loss_function(layers.EuclideanLoss)
     model.build()
     print 'build model complete'
-    model.train_model(train_x, train_y)
+    model.train_model(train_x, train_y, valid_x, valid_y)
     model.save_test_result(test_x)
 
 

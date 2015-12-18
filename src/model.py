@@ -9,21 +9,24 @@ from load import mnist
 
 
 class Model():
-    def __init__(self, learning_rate, momentum, batch_size, epoch_time):
+    def __init__(self, learning_rate, momentum, regularization, batch_size, epoch_time):
         self.layers = []
         self.params = []
+        self.regularization_param = []
         self.input = T.fmatrix()
         self.output = self.input
         self.label = T.fmatrix()
 
         self.learning_rate = learning_rate
         self.momentum = momentum
+        self.regularization = regularization
         self.batch_size = batch_size
         self.epoch_time = epoch_time
 
     def add_layer(self, layer):
         self.layers.append(layer)
         self.params += layer.params
+        self.regularization_param += layer.regularization
         self.output = layer.get_output(self.output)
 
     def set_loss_function(self, loss_function):
@@ -31,31 +34,36 @@ class Model():
 
     def build(self):
         self.cost = self.loss_function(self.output, self.label)
+        for reg in self.regularization_param:
+            self.cost = self.cost + self.regularization * reg
+
         self.label_predict = self.output #T.argmax(self.output, axis=1)
         self.grad_params = [T.grad(self.cost, param) for param in self.params]
         self.last_delta = T.tensor4()
-        updates = [(param, param - grad_param * self.learning_rate)
-            for param, grad_param in zip(self.params, self.grad_params)]
+
+        self.params_update = [theano.shared(param.get_value() * 0) for param in self.params]
+        updates = [(param, param - self.learning_rate * param_update)
+            for param, param_update in zip(self.params, self.params_update)]
+        updates += [(param_update, param_update * self.momentum +
+            (1.0 - self.momentum) * T.grad(self.cost, param))
+            for param, param_update in zip(self.params, self.params_update)]
 
         self.train = function([self.input, self.label], self.cost,
             updates=updates, allow_input_downcast=True)
         self.predict = function([self.input], self.label_predict,
             allow_input_downcast=True)
 
-    def train_model(self, train_x, train_y):
-        teX = np.asarray(train_x)
-        teY = np.asarray(train_y)
+    def train_model(self, train_x, train_y, valid_x, valid_y):
         for i in range(self.epoch_time):
             print 'epoch:', i+1, ',',
             cost = []
             for start, end in zip(range(0, len(train_x), self.batch_size),
                 range(self.batch_size, len(train_x), self.batch_size)):
                 cost += [self.train(train_x[start:end], train_y[start:end])]
-            tmp = self.predict(teX) - teY
-            # tmp = (self.predict(teX) - teY) * (teY != -1)
-            accuracy = np.sqrt(np.mean(tmp * tmp))
-            # accuracy = np.mean(np.argmax(test_y, axis=1) == self.predict(test_x))
-            print 'cost:', np.mean(cost), ',', 'accuracy:', accuracy * 48
+            tmp = self.predict(valid_x) - valid_y
+            accuracy = np.mean(tmp * tmp)
+            print 'training cost:', np.mean(cost), ',', 'validation cost:', accuracy, \
+                ',', 'accuracy:', np.sqrt(accuracy) * 48
 
     def save_test_result(self, test_x):
         dic = {

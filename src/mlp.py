@@ -10,7 +10,7 @@ def keypoint_detection():
     except:
         load.csv()
         data = sio.loadmat('data.mat')
-        
+
     train_x = data['train_x']
     train_y = data['train_y']
     test_x = data['test_x']
@@ -20,16 +20,19 @@ def keypoint_detection():
     train_y = (train_y - 48) / 48.0
     test_x = test_x / 255.0
 
-    model = Model(1, 100, 400)
+    train_x, valid_x = train_x[:-400], train_x[-400:]
+    train_y, valid_y = train_y[:-400], train_y[-400:]
 
-    model.add_layer(layers.FullConnectedLayer(9216, 256, 0, layers.rectify))
-    model.add_layer(layers.FullConnectedLayer(256, 100, 0, layers.rectify))
-    model.add_layer(layers.FullConnectedLayer(100, 30, 0, layers.rectify))
+    model = Model(0.01, 0.9, 0.01, 100, 1000)
+
+    model.add_layer(layers.FullConnectedLayer(9216, 256, 0.001, layers.rectify))
+    model.add_layer(layers.FullConnectedLayer(256, 100, 0.001, layers.rectify))
+    model.add_layer(layers.FullConnectedLayer(100, 30, 0.001))
     model.set_loss_function(layers.EuclideanLoss)
 
     model.build()
     print 'build model complete'
-    model.train_model(train_x, train_y)
+    model.train_model(train_x, train_y, valid_x, valid_y)
     model.save_test_result(test_x)
 
 
