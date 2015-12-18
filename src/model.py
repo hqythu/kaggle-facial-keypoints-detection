@@ -2,7 +2,7 @@ import csv
 import theano
 from theano import tensor as T
 from theano import function
-import switch
+import scipy.io as sio
 import numpy as np
 
 from load import mnist
@@ -93,6 +93,8 @@ class Model():
 
         answer = self.predict(test_x)
         answer = answer * 48.0 + 48
+        sio.savemat('result.mat', {'test_x': test_x,
+                                   'test_y': answer} )
         csvfile = file('result.csv', 'wb')
         writer = csv.writer(csvfile)
         writer.writerow(['RowId', 'Location'])

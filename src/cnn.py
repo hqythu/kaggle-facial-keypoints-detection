@@ -34,7 +34,7 @@ def keypoint_detection():
     train_y = (train_y - 48) / 48.0
     test_x = test_x / 255.0
 
-    model = Model(0.1, 100, 5)
+    model = Model(0.1, 0.1, 100, 5)
     model.add_layer(layers.ReshapeLayer(1, 96, 96))
     model.add_layer(layers.ConvolutionLayer((5, 5), 2, 1, 0.01, layers.rectify))
     model.add_layer(layers.PoolingLayer((2, 2))) # 46 * 46 * 4

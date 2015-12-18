@@ -34,13 +34,14 @@ def csv():
     while i < len(text):
         pic_raw = text[i][30].replace(" ", ",")
         pic = np.array( eval('['+pic_raw+']') )
-        i = i + 1
+        
         try:
             train_y[j] = np.array( text[i][0:30] )
             train_x[j] = pic
+            i = i + 1
             j = j + 1
         except:
-            j = j
+            i = i + 1
 
     f.close()
     f = file('test.csv')
