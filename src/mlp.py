@@ -25,9 +25,9 @@ def keypoint_detection():
 
     model = Model(0.01, 0.9, 0.01, 100, 1000)
 
-    model.add_layer(layers.FullConnectedLayer(9216, 256, 0.001, layers.rectify))
-    model.add_layer(layers.FullConnectedLayer(256, 100, 0.001, layers.rectify))
-    model.add_layer(layers.FullConnectedLayer(100, 30, 0.001))
+    model.add_layer(layers.FullConnectedLayer(9216, 256, 0.1, layers.rectify))
+    model.add_layer(layers.FullConnectedLayer(256, 100, 0.1, layers.rectify))
+    model.add_layer(layers.FullConnectedLayer(100, 30, 0.1))
     model.set_loss_function(layers.EuclideanLoss)
 
     model.build()

@@ -1,3 +1,4 @@
+import math
 import theano
 from theano import tensor as T
 from theano import function
@@ -7,6 +8,10 @@ import numpy as np
 
 def sigmoid(X):
     return T.nnet.sigmoid(X)
+
+
+def hyperbolic(X):
+    return T.tanh(X)
 
 
 def rectify(X):
@@ -39,8 +44,8 @@ class SoftmaxLayer(object):
 
 class FullConnectedLayer(object):
     def __init__(self, num_in, num_out, rand_std, activation=None):
-        w_values = np.asarray(np.random.randn(*(num_in, num_out)) * rand_std,
-            dtype='float32')
+        bound = 1.0 / math.sqrt(num_in)
+        w_values = np.asarray(np.random.uniform(-bound, bound, (num_in, num_out)), dtype='float32')
         b_values = np.zeros(num_out, dtype='float32')
 
         self.w = theano.shared(w_values)
