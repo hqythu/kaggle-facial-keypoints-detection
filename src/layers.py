@@ -86,7 +86,7 @@ class ReshapeLayer(object):
 
 
 class ConvolutionLayer(object):
-    def __init__(self, kernel_size, num_out, num_in, activation=None):
+    def __init__(self, kernel_size, num_out, num_in, b_init=0, activation=None):
         w_shape = (num_out, num_in) + kernel_size
         bound = math.sqrt(6.0) / math.sqrt((num_in + num_out) * np.prod(kernel_size))
         w_values = np.asarray(np.random.uniform(-bound, bound, w_shape), dtype='float32')

@@ -28,14 +28,18 @@ def keypoint_detection():
 
     model = Model(0.1, 0.9, 0.0005, 100, 20)
     model.add_layer(layers.ReshapeLayer(1, 96, 96))
-    model.add_layer(layers.ConvolutionLayer((5, 5), 2, 1, layers.rectify))
+    model.add_layer(layers.ConvolutionLayer((5, 5), 2, 1, 1, layers.rectify))
     model.add_layer(layers.PoolingLayer((2, 2))) # 46 * 46 * 4
-    model.add_layer(layers.ConvolutionLayer((5, 5), 4, 2, layers.rectify))
+    model.add_layer(layers.ConvolutionLayer((5, 5), 4, 2, 1, layers.rectify))
     model.add_layer(layers.PoolingLayer((2, 2))) # 21 * 21 * 8
-    model.add_layer(layers.ConvolutionLayer((4, 4), 8, 4, layers.rectify))
+    model.add_layer(layers.ConvolutionLayer((4, 4), 8, 4, 1, layers.rectify))
     model.add_layer(layers.PoolingLayer((2, 2))) # 9 * 9 * 16
-    model.add_layer(layers.ConvolutionLayer((4, 4), 16, 8, layers.rectify))
+    model.add_layer(layers.ConvolutionLayer((4, 4), 16, 8, 1, layers.rectify))
     model.add_layer(layers.PoolingLayer((2, 2))) # 3 * 3 * 32
+    model.add_layer(layers.FullConnectedLayer(144, 144, 1, layers.rectify))
+    model.add_layer(layers.DropoutLayer(0.5))
+    model.add_layer(layers.FullConnectedLayer(144, 144, 1, layers.rectify))
+    model.add_layer(layers.DropoutLayer(0.5))
     model.add_layer(layers.FullConnectedLayer(144, 30))
     model.set_loss_function(layers.EuclideanLoss)
     model.build()

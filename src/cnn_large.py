@@ -28,19 +28,21 @@ def keypoint_detection():
 
     model = Model(0.01, 0.9, 0.0005, 100, 1000)
     model.add_layer(layers.ReshapeLayer(1, 96, 96))
-    model.add_layer(layers.ConvolutionLayer((3, 3), 8, 1, layers.rectify))
+    model.add_layer(layers.ConvolutionLayer((3, 3), 8, 1, 1, layers.rectify))
     model.add_layer(layers.PoolingLayer((2, 2))) # 47 * 47 * 8
-    model.add_layer(layers.ConvolutionLayer((2, 2), 16, 8, layers.rectify))
+    model.add_layer(layers.ConvolutionLayer((2, 2), 16, 8, 1, layers.rectify))
     model.add_layer(layers.PoolingLayer((2, 2))) # 23 * 23 * 16
-    model.add_layer(layers.ConvolutionLayer((2, 2), 32, 16, layers.rectify))
+    model.add_layer(layers.ConvolutionLayer((2, 2), 32, 16, 1, layers.rectify))
     model.add_layer(layers.PoolingLayer((2, 2))) # 11 * 11 * 32
-    model.add_layer(layers.ConvolutionLayer((2, 2), 64, 32, layers.rectify))
+    model.add_layer(layers.ConvolutionLayer((2, 2), 64, 32, 1, layers.rectify))
     model.add_layer(layers.PoolingLayer((2, 2))) # 5 * 5 * 64
-    model.add_layer(layers.ConvolutionLayer((2, 2), 128, 64, layers.rectify))
+    model.add_layer(layers.ConvolutionLayer((2, 2), 128, 64, 1, layers.rectify))
     model.add_layer(layers.PoolingLayer((2, 2))) # 2 * 2 * 128
-    model.add_layer(layers.FullConnectedLayer(512, 128, layers.rectify))
-    model.add_layer(layers.FullConnectedLayer(128, 64, layers.rectify))
-    model.add_layer(layers.FullConnectedLayer(64, 30))
+    model.add_layer(layers.FullConnectedLayer(512, 512, 1, layers.rectify))
+    model.add_layer(layers.DropoutLayer(0.5))
+    model.add_layer(layers.FullConnectedLayer(512, 512, 1, layers.rectify))
+    model.add_layer(layers.DropoutLayer(0.5))
+    model.add_layer(layers.FullConnectedLayer(512, 30))
     model.set_loss_function(layers.EuclideanLoss)
     model.build()
     print 'build model complete'
