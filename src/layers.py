@@ -51,7 +51,7 @@ class FullConnectedLayer(object):
         self.w = theano.shared(w_values)
         self.b = theano.shared(b_values)
         self.params = [self.w, self.b]
-        self.regularization = [T.mean(T.sqr(self.w))]
+        self.regularization = [T.sum(T.sqr(self.w))]
         self.activation = activation
 
     def get_output(self, input):
@@ -87,7 +87,7 @@ class ConvolutionLayer(object):
         self.w = theano.shared(w_values)
         self.b = theano.shared(b_values)
         self.params = [self.w, self.b]
-        self.regularization = [T.mean(T.sqr(self.w))]
+        self.regularization = [T.sum(T.sqr(self.w))]
         self.activation = activation
 
     def get_output(self, input):
