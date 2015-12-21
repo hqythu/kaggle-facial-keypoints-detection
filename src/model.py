@@ -51,6 +51,8 @@ class Model():
 
         self.train = function([self.input, self.label], self.cost,
             updates=updates, allow_input_downcast=True)
+        self.cost_fun = function([self.input, self.label], self.cost,
+            allow_input_downcast=True)
         self.predict = function([self.input], self.label_predict,
             allow_input_downcast=True)
 
@@ -62,9 +64,10 @@ class Model():
                 range(self.batch_size, len(train_x), self.batch_size)):
                 cost += [self.train(train_x[start:end], train_y[start:end])]
             tmp = self.predict(valid_x) - valid_y
-            accuracy = np.mean(tmp * tmp)
-            print 'training cost:', np.mean(cost), ',', 'validation cost:', accuracy, \
-                ',', 'accuracy:', np.sqrt(accuracy) * 48
+            accuracy = np.sqrt(np.mean(tmp * tmp)) * 48
+            valid_cost = self.cost_fun(valid_x, valid_y)
+            print 'training cost:', np.mean(cost), ',', 'validation cost:', valid_cost, \
+                ',', 'accuracy:', accuracy
 
     def save_test_result(self, test_x):
         dic = {
