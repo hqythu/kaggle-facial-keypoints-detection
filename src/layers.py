@@ -43,7 +43,7 @@ class SoftmaxLayer(object):
 
 
 class FullConnectedLayer(object):
-    def __init__(self, num_in, num_out, rand_std, activation=None):
+    def __init__(self, num_in, num_out, activation=None):
         bound = math.sqrt(6.0) / math.sqrt(num_in + num_out)
         w_values = np.asarray(np.random.uniform(-bound, bound, (num_in, num_out)), dtype='float32')
         b_values = np.zeros(num_out, dtype='float32')
@@ -77,7 +77,7 @@ class ReshapeLayer(object):
 
 
 class ConvolutionLayer(object):
-    def __init__(self, kernel_size, num_out, num_in, rand_std, activation=None):
+    def __init__(self, kernel_size, num_out, num_in, activation=None):
         w_shape = (num_out, num_in) + kernel_size
         bound = math.sqrt(6.0) / math.sqrt((num_in + num_out) * np.prod(kernel_size))
         w_values = np.asarray(np.random.uniform(-bound, bound, w_shape), dtype='float32')
