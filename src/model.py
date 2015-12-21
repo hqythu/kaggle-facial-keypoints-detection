@@ -34,18 +34,17 @@ class Model():
 
     def build(self):
         self.cost = self.loss_function(self.output, self.label)
+        reg_cost = self.cost
         for reg in self.regularization_param:
-            self.cost = self.cost + self.regularization * reg
+            reg_cost = reg_cost + self.regularization * reg
 
         self.label_predict = self.output #T.argmax(self.output, axis=1)
-        self.grad_params = [T.grad(self.cost, param) for param in self.params]
-        self.last_delta = T.tensor4()
 
         self.params_update = [theano.shared(param.get_value() * 0) for param in self.params]
         updates = [(param, param - self.learning_rate * param_update)
             for param, param_update in zip(self.params, self.params_update)]
         updates += [(param_update, param_update * self.momentum +
-            (1.0 - self.momentum) * T.grad(self.cost, param))
+            (1.0 - self.momentum) * T.grad(reg_cost, param))
             for param, param_update in zip(self.params, self.params_update)]
 
         self.train = function([self.input, self.label], self.cost,
