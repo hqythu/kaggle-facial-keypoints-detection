@@ -43,10 +43,10 @@ class SoftmaxLayer(object):
 
 
 class FullConnectedLayer(object):
-    def __init__(self, num_in, num_out, activation=None):
+    def __init__(self, num_in, num_out, b_init=0, activation=None):
         bound = math.sqrt(6.0) / math.sqrt(num_in + num_out)
         w_values = np.asarray(np.random.uniform(-bound, bound, (num_in, num_out)), dtype='float32')
-        b_values = np.zeros(num_out, dtype='float32')
+        b_values = np.zeros(num_out, dtype='float32') + b_init
 
         self.w = theano.shared(w_values)
         self.b = theano.shared(b_values)
