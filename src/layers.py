@@ -81,7 +81,7 @@ class ConvolutionLayer(object):
         w_shape = (num_out, num_in) + kernel_size
         bound = math.sqrt(6.0) / math.sqrt((num_in + num_out) * np.prod(kernel_size))
         w_values = np.asarray(np.random.uniform(-bound, bound, w_shape), dtype='float32')
-        b_values = np.asarray(np.random.randn(num_out), dtype='float32')
+        b_values = np.zeros(num_out, dtype='float32')
 
         self.kernel_size = kernel_size
         self.w = theano.shared(w_values)
