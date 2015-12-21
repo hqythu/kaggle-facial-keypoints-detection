@@ -1,6 +1,6 @@
 from model import Model
 import scipy.io as sio
-import sklearn
+import sklearn.utils
 import layers
 import load
 
