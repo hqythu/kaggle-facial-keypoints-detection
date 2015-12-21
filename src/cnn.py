@@ -1,5 +1,6 @@
 from model import Model
 import scipy.io as sio
+import sklearn
 import layers
 import load
 
@@ -19,6 +20,8 @@ def keypoint_detection():
     train_x = train_x / 256.0
     train_y = (train_y - 48) / 48.0
     test_x = test_x / 256.0
+
+    sklearn.utils.shuffle(train_x, train_y, random_state=0)
 
     train_x, valid_x = train_x[:-400], train_x[-400:]
     train_y, valid_y = train_y[:-400], train_y[-400:]
