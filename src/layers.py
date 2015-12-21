@@ -41,6 +41,9 @@ class SoftmaxLayer(object):
         self.output = softmax(self.input)
         return self.output
 
+    def get_test_output(self, input):
+        return self.get_output(input)
+
 
 class FullConnectedLayer(object):
     def __init__(self, num_in, num_out, b_init=0, activation=None):
@@ -60,6 +63,9 @@ class FullConnectedLayer(object):
         self.output = lin_output if self.activation is None else self.activation(lin_output)
         return self.output
 
+    def get_test_output(self, input):
+        return self.get_output(input)
+
 
 class ReshapeLayer(object):
     def __init__(self, num_channel, image_width, image_height):
@@ -74,6 +80,9 @@ class ReshapeLayer(object):
         self.output = self.input.reshape((-1, self.num_channel,
             self.image_width, self.image_height))
         return self.output
+
+    def get_test_output(self, input):
+        return self.get_output(input)
 
 
 class ConvolutionLayer(object):
@@ -96,6 +105,9 @@ class ConvolutionLayer(object):
         self.output = conv_output if self.activation is None else self.activation(conv_output)
         return self.output
 
+    def get_test_output(self, input):
+        return self.get_output(input)
+
 
 class PoolingLayer(object):
     def __init__(self, kernel_size, activation=None):
@@ -111,15 +123,27 @@ class PoolingLayer(object):
         self.output = pool_output if self.activation is None else self.activation(pool_output)
         return self.output
 
+    def get_test_output(self, input):
+        return self.get_output(input)
+
 
 class DropoutLayer(object):
     def __init__(self, p_drop):
         self.p_drop = p_drop
         self.params = []
+        self.regularization = []
+        self.rng = np.random.RandomState(42)
+        self.srng = T.shared_randomstreams.RandomStreams(self.rng.randint(999999))
 
-    def get_output(input):
+    def get_output(self, input):
         self.input = input
-        self.output = output
+        output = input
         if self.p_drop > 0:
             retain_p = 1 - self.p_drop
+            output *= self.srng.binomial(output.shape, p=retain_p, dtype='float32')
+            output /= retain_p
+        self.output = output
         return self.output
+
+    def get_test_output(self, input):
+        return input

@@ -15,6 +15,7 @@ class Model():
         self.regularization_param = []
         self.input = T.fmatrix()
         self.output = self.input
+        self.test_output = self.input
         self.label = T.fmatrix()
 
         self.learning_rate = learning_rate
@@ -28,6 +29,7 @@ class Model():
         self.params += layer.params
         self.regularization_param += layer.regularization
         self.output = layer.get_output(self.output)
+        self.test_output = layer.get_test_output(self.test_output)
 
     def set_loss_function(self, loss_function):
         self.loss_function = loss_function
@@ -38,7 +40,7 @@ class Model():
         for reg in self.regularization_param:
             reg_cost = reg_cost + self.regularization * reg
 
-        self.label_predict = self.output #T.argmax(self.output, axis=1)
+        self.label_predict = self.test_output #T.argmax(self.output, axis=1)
 
         self.params_update = [theano.shared(param.get_value() * 0) for param in self.params]
         updates = [(param, param - self.learning_rate * param_update)
