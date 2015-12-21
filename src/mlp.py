@@ -26,7 +26,7 @@ def keypoint_detection():
     train_x, valid_x = train_x[:-400], train_x[-400:]
     train_y, valid_y = train_y[:-400], train_y[-400:]
 
-    model = Model(0.01, 0.9, 0.01, 100, 10000)
+    model = Model(0.01, 0.9, 0.0005, 100, 10000)
 
     model.add_layer(layers.FullConnectedLayer(9216, 256, layers.rectify))
     model.add_layer(layers.FullConnectedLayer(256, 100, layers.rectify))

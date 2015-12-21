@@ -26,7 +26,7 @@ def keypoint_detection():
     train_x, valid_x = train_x[:-400], train_x[-400:]
     train_y, valid_y = train_y[:-400], train_y[-400:]
 
-    model = Model(0.01, 0.9, 0.01, 100, 1000)
+    model = Model(0.01, 0.9, 0.0005, 100, 1000)
     model.add_layer(layers.ReshapeLayer(1, 96, 96))
     model.add_layer(layers.ConvolutionLayer((3, 3), 8, 1, layers.rectify))
     model.add_layer(layers.PoolingLayer((2, 2))) # 47 * 47 * 8
