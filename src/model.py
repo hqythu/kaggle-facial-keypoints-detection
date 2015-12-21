@@ -9,7 +9,7 @@ from load import mnist
 
 
 class Model():
-    def __init__(self, learning_rate, momentum, regularization, batch_size, epoch_time):
+    def __init__(self, learning_rate, momentum, regularization, batch_size, epoch_time, disp_freq=1):
         self.layers = []
         self.params = []
         self.regularization_param = []
@@ -23,6 +23,7 @@ class Model():
         self.regularization = regularization
         self.batch_size = batch_size
         self.epoch_time = epoch_time
+        self.disp_freq = disp_freq
 
     def add_layer(self, layer):
         self.layers.append(layer)
@@ -58,7 +59,8 @@ class Model():
 
     def train_model(self, train_x, train_y, valid_x, valid_y):
         for i in range(self.epoch_time):
-            print 'epoch:', i+1, ',',
+            if ((i+1) % self.disp_freq == 0):
+                print 'epoch:', i+1, ',',
             cost = []
             for start, end in zip(range(0, len(train_x), self.batch_size),
                 range(self.batch_size, len(train_x), self.batch_size)):
@@ -66,8 +68,9 @@ class Model():
             tmp = self.predict(valid_x) - valid_y
             accuracy = np.sqrt(np.mean(tmp * tmp)) * 48
             valid_cost = self.cost_fun(valid_x, valid_y)
-            print 'training cost:', np.mean(cost), ',', 'validation cost:', valid_cost, \
-                ',', 'accuracy:', accuracy
+            if ((i+1) % self.disp_freq == 0):
+                print 'training cost:', np.mean(cost), ',', 'validation cost:', valid_cost, \
+                    ',', 'accuracy:', accuracy
 
     def save_test_result(self, test_x):
         dic = {
