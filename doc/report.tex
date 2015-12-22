@@ -137,6 +137,37 @@ Glorot hypothesize that this behavior is the result of combination of random ini
 and the fact that an output of zero correspond to a saturated sigmoid. Unsupervised pre-training
 can successfully solve this issue.
 
+While with another kind of activation function, known as ReLU(rectify linear unit), the problem
+of saturation and gradient diminishing is also solved. ReLU activation act as follow:
+
+$$
+rectify(x) = max(x, 0)
+$$
+
+It can achieve the performance as better
+as a pre-trained sigmoid network\cite{glorot2011deep} without any unsupervised pre-training.
+It behavior is also more plausible at the viewpoint of biological neural science, which claim
+a neuron to be closed below zero, and behave linearly when input is above zero with in some range,
+and this range is satisfied most of time.
+
+Also rectifier activation function allow a network to easily obtain sparse representations, which
+is biologically plausible and have mathematical advantages.
+
+The non-linearity when using rectify comes from path-selection. For different input, different
+set of neurons are active. This model can be viewed as an \emph{exponential
+number of linear models that share parameters}\cite{nair2010rectified}.
+
+Experiment shows both improvement on learning speed and performance
+\cite{krizhevsky2012imagenet, glorot2011deep}.
+
+In our model, both the convolution layer and the full connected layer is activate by ReLU function
+except for the last layer, which followed by the finally loss layer. Because we want the output
+result to have both positive and negative value, while ReLU only result in positive and zero.
+
+Also this approach can be used in classification problem with softmax and cross entropy loss.
+Allow result to be negative increase the difference when doing softmax, which result in better
+classification result.
+
 \subsection{Weight Initialization}
 
 \subsection{Dropout}
