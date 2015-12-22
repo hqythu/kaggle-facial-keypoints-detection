@@ -130,7 +130,7 @@ often occurs and make it very slow to converge. This issue is common when using 
 activation function, since they have a so-called saturation regime where gradient almost vanished.
 According to experiment by Glorot \cite{glorot2010understanding}, for a feedforward neural net
 with 4 layers and activate with sigmoid function, the last hidden layer quickly saturate with
-output value of 0, which slow down the process of learning. and after a hundred of epochs,
+output value of 0, which slow down the progress of learning. and after a hundred of epochs,
 it escaped, and the followed layer began to saturate.
 
 Glorot hypothesize that this behavior is the result of combination of random initialization
@@ -169,6 +169,61 @@ Allow result to be negative increase the difference when doing softmax, which re
 classification result.
 
 \subsection{Weight Initialization}
+In a deep enough neural network, initialization of weight parameter sometimes determine whether the
+training progress converge. A too large initialization cause saturation in case of sigmoid or hyperbolic
+activation function, or layer-by-layer amplification of output which finally result in
+infinity for NaN when deep enough in case of ReLU. Both case put a obvious obstacle on gradient
+descent progress. While too small initialization result in small gradient to propagate
+(since this gradient is proportional to the value of the weights).
+
+Typical method is to initialize weights from zero-centered normal or uniform distribution with specified
+standard deviation. The choose of this variance, as a hyper-parameter, becomes a problem.
+Glorot\cite{glorot2010understanding} propose a method, which commonly called "Xavier" initialization,
+based on the assumption that the activations are linear. It take the form:
+$$
+Var(w) = \frac{2}{n_{in}+n_{out}}
+$$
+where $n_{in}$ and $n_{out}$ are the number of units in the previous layer and the next layer.
+Or equivalently, $n_in$ is the number of input for each neuron, and $n_out$ is the total number of
+neuron in this layer.
+
+A more recently research by He\cite{he2015delving} provide a more refined analysis specifically
+on ReLU activation, and it has form:
+$$
+Var(x) = \frac{2}{n}
+$$
+where $n$ is the number of input for each neuron, e.g. the number of unit in previous layer for
+full connected layer.
+
+The above discussion target full connected layer. Convolution layer, share the same principle,
+since convolution is also a linear combination equivalent to full connected.
+
+For a convolution filter with size $w\times h$, input channel size $n_{in}$, and output channel size
+$n_{out}$, each output number is associated with $w\times h$ input numbers each channel. So we can have
+the formula for convolution layer:
+$$
+Var(w) = \frac{2}{(n_{in} + n_{out}) \times (w\times h)}
+$$
+for Glorot's method and:
+$$
+Var(w) = \frac{2}{n \times (w\times h)}
+$$
+for He's method.
+
+Since we have this variance, can easily drop an implementation for this random initialization. 
+Normal distribution can easily multiply $\sqrt{Var(w)}$ to the standard normal distribution.
+And uniform distribution, can be generate from interval:
+$$
+[-\sqrt{3*Var(w)}, \sqrt{3*Var(w)}]
+$$
+
+In our model, we use both the above two method of initialization, while without any noticeable
+difference.
+
+When initialize for bias, typical way is set to zero. While some have other ways\cite{krizhevsky2012imagenet}
+to initialize to a small positive number to avoid ReLU unit from diminish at the beginning.
+However, it is not clear if this provides a consistent improvement and it is more common to
+simply use 0 bias initialization\cite{cs231nInit}.
 
 \subsection{Dropout}
 
