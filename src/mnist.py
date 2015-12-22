@@ -19,6 +19,7 @@ def mnist():
     model.add_layer(layers.ConvolutionLayer((3, 3), 32, 16, 0, layers.rectify))
     model.add_layer(layers.PoolingLayer((2, 2)))  # 2 * 2 * 32
     model.add_layer(layers.FullConnectedLayer(128, 128, 0, layers.rectify))
+    model.add_layer(layers.DropoutLayer(0.5))
     model.add_layer(layers.FullConnectedLayer(128, 10))
     model.add_layer(layers.SoftmaxLayer())
     model.set_loss_function(layers.CrossEntropyLoss)
