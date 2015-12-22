@@ -41,7 +41,7 @@ Tsinghua University\\
 Xiaocheng Yang\\
 CST34\\
 Tsinghua University\\
-{\tt\small 2013XXXXXX}
+{\tt\small 2013011383}
 }
 
 \maketitle
@@ -102,6 +102,22 @@ perceptron, convolutional neural network and cascaded convolutional network.
 
 
 \section{Related Work}
+Same problem have already been addressed as course project by two student in
+Stanford University\cite{wangfacial}. They only detect two key point among those 15
+points given, which is left\_eye\_center and right\_eye\_center, and this two points are
+relatively easy to detect.
+
+They use a traditional machine learning method. They first do data normalization on
+the brightness of each image, set the brightest point to 255 and the darkest point to 0.
+Then perform a principle component analysis on the data set to find several \emph{eigen face}.
+Last use a \emph{Mean Patch Searching} to find the position.
+
+They obtain a MSE of 2.88 on the two key points.
+
+Another work using convolutional neural network is by Sun, Yi\cite{sun2013deep} use three
+convolutional network and cascade them to refine the prediction step by step, using the area
+centered by previous layer prediction for refine learning to grasp local structures. They claim to
+be the state-of-art work in that time.
 
 \section{Technical Approach}
 In this section we demonstrate some technical approach which, based on previous
@@ -246,383 +262,154 @@ and with $p=0.5$.
 
 \section{Network Structure}
 
-\section{Experiment}
+In this part and the next part, we focus on the struture design of networks and comparison of different nerworks. Inspired by [2], we build a two level cascaded network. The level 1 network is to narrow down the range of possible coordinates, and the level 2 networks gives precise answers. \\
 
-\section{Conclusion}
+We take the whole bitmap matrices as the input of the level 1 network. It maps those matrices to the 15 types of points at the same time. Figure 1 is an overview of the level 1 network. It is obvious that different types of points shared the same kernal blocks in the convolutional layers. \\
 
-\begin{comment}
-\section{Introduction}
-%-------------------------------------------------------------------------
-\subsection{Language}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\linewidth]{figure1.eps}
+   \caption{The structure of deep convolutional network F1. Sizes of input, convolution, and max pooling layers are illustrated by cuboids whose length, width, and height denote the number of maps, and the size of each map. Local receptive fields of neurons in different layers are illustrated by small squares in the cuboids}
+\label{fig:single}
+\end{figure}
 
-All manuscripts must be in English.
+The structure of level 2 networks are the same of the level 1 network. But level 2 networks only takes a subgraph of the original bitmap as the input. The subgraph is centered at the result from level 1 network. So level 1 network functions to narrow down the range. The struture of the whole cascaded network is shown in Figure 2. \\
 
-\subsection{Dual submission}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\linewidth]{figure2.eps}
+   \caption{Two-level cascaded convolutional networks. The input is the bitmap matrix. The level 1 network takes the whole bitmap matrix as input, and outputs the predicted point coordinates. Then subgraphs centered at those coordinates are cut off for another deep convolutional network to get more precise answers.}
+\label{fig:cascade}
+\end{figure}
 
-Please refer to the author guidelines on the CVPR 2015 web page for a
-discussion of the policy on dual submissions.
+For the comparison, we build one mlp network(Figure 3) and one single convolutional network(just the one in Figure 1). Also we use another method of classification that maps the 96*96 matrix into a same size matrix. To make the aim matrix, we  convert the answer of training data into a 96*96 matrix with only the point nearest to the answer point is 1 and others 0. It goes very bad so we would not mention it in the Experiment part.
 
-\subsection{Paper length}
-For CVPR 2015, the rules about paper length have changed, so please
-read this section carefully. Papers, excluding the references section,
-must be no longer than eight pages in length. The references section
-will not be included in the page count, and there is no limit on the
-length of the references section. For example, a paper of eight pages
-with two pages of references would have a total length of 10 pages.
-{\bf Unlike previous years, there will be no extra page charges for
-  CVPR 2015.}
-
-Overlength papers will simply not be reviewed.  This includes papers
-where the margins and formatting are deemed to have been significantly
-altered from those laid down by this style guide.  Note that this
-\LaTeX\ guide already sets figure captions and references in a smaller font.
-The reason such papers will not be reviewed is that there is no provision for
-supervised revisions of manuscripts.  The reviewing process cannot determine
-the suitability of the paper for presentation in eight pages if it is
-reviewed in eleven.  
-
-%-------------------------------------------------------------------------
-\subsection{The ruler}
-The \LaTeX\ style defines a printed ruler which should be present in the
-version submitted for review.  The ruler is provided in order that
-reviewers may comment on particular lines in the paper without
-circumlocution.  If you are preparing a document using a non-\LaTeX\
-document preparation system, please arrange for an equivalent ruler to
-appear on the final output pages.  The presence or absence of the ruler
-should not change the appearance of any other content on the page.  The
-camera ready copy should not contain a ruler. (\LaTeX\ users may uncomment
-the \verb'\cvprfinalcopy' command in the document preamble.)  Reviewers:
-note that the ruler measurements do not align well with lines in the paper
---- this turns out to be very difficult to do well when the paper contains
-many figures and equations, and, when done, looks ugly.  Just use fractional
-references (e.g.\ this line is $095.5$), although in most cases one would
-expect that the approximate location will be adequate.
-
-\subsection{Mathematics}
-
-Please number all of your sections and displayed equations.  It is
-important for readers to be able to refer to any particular equation.  Just
-because you didn't refer to it in the text doesn't mean some future reader
-might not need to refer to it.  It is cumbersome to have to use
-circumlocutions like ``the equation second from the top of page 3 column
-1''.  (Note that the ruler will not be present in the final copy, so is not
-an alternative to equation numbers).  All authors will benefit from reading
-Mermin's description of how to write mathematics:
-\url{http://www.pamitc.org/documents/mermin.pdf}.
-
-
-\subsection{Blind review}
-
-Many authors misunderstand the concept of anonymizing for blind
-review.  Blind review does not mean that one must remove
-citations to one's own work---in fact it is often impossible to
-review a paper unless the previous citations are known and
-available.
-
-Blind review means that you do not use the words ``my'' or ``our''
-when citing previous work.  That is all.  (But see below for
-techreports.)
-
-Saying ``this builds on the work of Lucy Smith [1]'' does not say
-that you are Lucy Smith; it says that you are building on her
-work.  If you are Smith and Jones, do not say ``as we show in
-[7]'', say ``as Smith and Jones show in [7]'' and at the end of the
-paper, include reference 7 as you would any other cited work.
-
-An example of a bad paper just asking to be rejected:
-\begin{quote}
-\begin{center}
-    An analysis of the frobnicatable foo filter.
-\end{center}
-
-   In this paper we present a performance analysis of our
-   previous paper [1], and show it to be inferior to all
-   previously known methods.  Why the previous paper was
-   accepted without this analysis is beyond me.
-
-   [1] Removed for blind review
-\end{quote}
-
-
-An example of an acceptable paper:
-
-\begin{quote}
-\begin{center}
-     An analysis of the frobnicatable foo filter.
-\end{center}
-
-   In this paper we present a performance analysis of the
-   paper of Smith \etal [1], and show it to be inferior to
-   all previously known methods.  Why the previous paper
-   was accepted without this analysis is beyond me.
-
-   [1] Smith, L and Jones, C. ``The frobnicatable foo
-   filter, a fundamental contribution to human knowledge''.
-   Nature 381(12), 1-213.
-\end{quote}
-
-If you are making a submission to another conference at the same time,
-which covers similar or overlapping material, you may need to refer to that
-submission in order to explain the differences, just as you would if you
-had previously published related work.  In such cases, include the
-anonymized parallel submission~\cite{Authors14} as additional material and
-cite it as
-\begin{quote}
-[1] Authors. ``The frobnicatable foo filter'', F\&G 2014 Submission ID 324,
-Supplied as additional material {\tt fg324.pdf}.
-\end{quote}
-
-Finally, you may feel you need to tell the reader that more details can be
-found elsewhere, and refer them to a technical report.  For conference
-submissions, the paper must stand on its own, and not {\em require} the
-reviewer to go to a techreport for further details.  Thus, you may say in
-the body of the paper ``further details may be found
-in~\cite{Authors14b}''.  Then submit the techreport as additional material.
-Again, you may not assume the reviewers will read this material. 
-
-Sometimes your paper is about a problem which you tested using a tool which
-is widely known to be restricted to a single institution.  For example,
-let's say it's 1969, you have solved a key problem on the Apollo lander,
-and you believe that the CVPR70 audience would like to hear about your
-solution.  The work is a development of your celebrated 1968 paper entitled
-``Zero-g frobnication: How being the only people in the world with access to
-the Apollo lander source code makes us a wow at parties'', by Zeus \etal.
-
-You can handle this paper like any other.  Don't write ``We show how to
-improve our previous work [Anonymous, 1968].  This time we tested the
-algorithm on a lunar lander [name of lander removed for blind review]''.
-That would be silly, and would immediately identify the authors. Instead
-write the following:
-\begin{quotation}
-\noindent
-   We describe a system for zero-g frobnication.  This
-   system is new because it handles the following cases:
-   A, B.  Previous systems [Zeus et al. 1968] didn't
-   handle case B properly.  Ours handles it by including
-   a foo term in the bar integral.
-
-   ...
-
-   The proposed system was integrated with the Apollo
-   lunar lander, and went all the way to the moon, don't
-   you know.  It displayed the following behaviours
-   which show how well we solved cases A and B: ...
-\end{quotation}
-As you can see, the above text follows standard scientific convention,
-reads better than the first version, and does not explicitly name you as
-the authors.  A reviewer might think it likely that the new paper was
-written by Zeus \etal, but cannot make any decision based on that guess.
-He or she would have to be sure that no other authors could have been
-contracted to solve problem B.
-
-FAQ: Are acknowledgements OK?  No.  Leave them for the final copy.
-
-
-\begin{figure}[t]
-\begin{center}
-\fbox{\rule{0pt}{2in} \rule{0.9\linewidth}{0pt}}
-   %\includegraphics[width=0.8\linewidth]{egfigure.eps}
-\end{center}
-   \caption{Example of caption.  It is set in Roman so that mathematics
-   (always set in Roman: $B \sin A = A \sin B$) may be included without an
-   ugly clash.}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\linewidth]{MLP.eps}
+   \caption{The structure of MLP layers.}
 \label{fig:long}
 \label{fig:onecol}
 \end{figure}
 
-\subsection{Miscellaneous}
+\section{Experiment}
 
-\noindent
-Compare the following:\\
-\begin{tabular}{ll}
- \verb'$conf_a$' &  $conf_a$ \\
- \verb'$\mathit{conf}_a$' & $\mathit{conf}_a$
-\end{tabular}\\
-See The \TeX book, p165.
-
-The space after \eg, meaning ``for example'', should not be a
-sentence-ending space. So \eg is correct, {\em e.g.} is not.  The provided
-\verb'\eg' macro takes care of this.
-
-When citing a multi-author paper, you may save space by using ``et alia'',
-shortened to ``\etal'' (not ``{\em et.\ al.}'' as ``{\em et}'' is a complete word.)
-However, use it only when there are three or more authors.  Thus, the
-following is correct: ``
-   Frobnication has been trendy lately.
-   It was introduced by Alpher~\cite{Alpher02}, and subsequently developed by
-   Alpher and Fotheringham-Smythe~\cite{Alpher03}, and Alpher \etal~\cite{Alpher04}.''
-
-This is incorrect: ``... subsequently developed by Alpher \etal~\cite{Alpher03} ...''
-because reference~\cite{Alpher03} has just two authors.  If you use the
-\verb'\etal' macro provided, then you need not worry about double periods
-when used at the end of a sentence as in Alpher \etal.
-
-For this citation style, keep multiple citations in numerical (not
-chronological) order, so prefer \cite{Alpher03,Alpher02,Authors14} to
-\cite{Alpher02,Alpher03,Authors14}.
-
-
-\begin{figure*}
-\begin{center}
-\fbox{\rule{0pt}{2in} \rule{.9\linewidth}{0pt}}
-\end{center}
-   \caption{Example of a short caption, which should be centered.}
-\label{fig:short}
-\end{figure*}
-
-%------------------------------------------------------------------------
-\section{Formatting your paper}
-
-All text must be in a two-column format. The total allowable width of the
-text area is $6\frac78$ inches (17.5 cm) wide by $8\frac78$ inches (22.54
-cm) high. Columns are to be $3\frac14$ inches (8.25 cm) wide, with a
-$\frac{5}{16}$ inch (0.8 cm) space between them. The main title (on the
-first page) should begin 1.0 inch (2.54 cm) from the top edge of the
-page. The second and following pages should begin 1.0 inch (2.54 cm) from
-the top edge. On all pages, the bottom margin should be 1-1/8 inches (2.86
-cm) from the bottom edge of the page for $8.5 \times 11$-inch paper; for A4
-paper, approximately 1-5/8 inches (4.13 cm) from the bottom edge of the
-page.
-
-%-------------------------------------------------------------------------
-\subsection{Margins and page numbering}
-
-All printed material, including text, illustrations, and charts, must be kept
-within a print area 6-7/8 inches (17.5 cm) wide by 8-7/8 inches (22.54 cm)
-high.
-Page numbers should be in footer with page numbers, centered and .75
-inches from the bottom of the page and make it start at the correct page
-number rather than the 4321 in the example.  To do this fine the line (around
-line 23)
-\begin{verbatim}
-%\ifcvprfinal\pagestyle{empty}\fi
-\setcounter{page}{4321}
-\end{verbatim}
-where the number 4321 is your assigned starting page.
-
-Make sure the first page is numbered by commenting out the first page being
-empty on line 46
-\begin{verbatim}
-%\thispagestyle{empty}
-\end{verbatim}
-
-
-%-------------------------------------------------------------------------
-\subsection{Type-style and fonts}
-
-Wherever Times is specified, Times Roman may also be used. If neither is
-available on your word processor, please use the font closest in
-appearance to Times to which you have access.
-
-MAIN TITLE. Center the title 1-3/8 inches (3.49 cm) from the top edge of
-the first page. The title should be in Times 14-point, boldface type.
-Capitalize the first letter of nouns, pronouns, verbs, adjectives, and
-adverbs; do not capitalize articles, coordinate conjunctions, or
-prepositions (unless the title begins with such a word). Leave two blank
-lines after the title.
-
-AUTHOR NAME(s) and AFFILIATION(s) are to be centered beneath the title
-and printed in Times 12-point, non-boldface type. This information is to
-be followed by two blank lines.
-
-The ABSTRACT and MAIN TEXT are to be in a two-column format.
-
-MAIN TEXT. Type main text in 10-point Times, single-spaced. Do NOT use
-double-spacing. All paragraphs should be indented 1 pica (approx. 1/6
-inch or 0.422 cm). Make sure your text is fully justified---that is,
-flush left and flush right. Please do not place any additional blank
-lines between paragraphs.
-
-Figure and table captions should be 9-point Roman type as in
-Figures~\ref{fig:onecol} and~\ref{fig:short}.  Short captions should be centred.
-
-\noindent Callouts should be 9-point Helvetica, non-boldface type.
-Initially capitalize only the first word of section titles and first-,
-second-, and third-order headings.
-
-FIRST-ORDER HEADINGS. (For example, {\large \bf 1. Introduction})
-should be Times 12-point boldface, initially capitalized, flush left,
-with one blank line before, and one blank line after.
-
-SECOND-ORDER HEADINGS. (For example, { \bf 1.1. Database elements})
-should be Times 11-point boldface, initially capitalized, flush left,
-with one blank line before, and one after. If you require a third-order
-heading (we discourage it), use 10-point Times, boldface, initially
-capitalized, flush left, preceded by one blank line, followed by a period
-and your text on the same line.
-
-%-------------------------------------------------------------------------
-\subsection{Footnotes}
-
-Please use footnotes\footnote {This is what a footnote looks like.  It
-often distracts the reader from the main flow of the argument.} sparingly.
-Indeed, try to avoid footnotes altogether and include necessary peripheral
-observations in
-the text (within parentheses, if you prefer, as in this sentence).  If you
-wish to use a footnote, place it at the bottom of the column on the page on
-which it is referenced. Use Times 8-point type, single-spaced.
-
-
-%-------------------------------------------------------------------------
-\subsection{References}
-
-List and number all bibliographical references in 9-point Times,
-single-spaced, at the end of your paper. When referenced in the text,
-enclose the citation number in square brackets, for
-example~\cite{Authors14}.  Where appropriate, include the name(s) of
-editors of referenced books.
-
+The size of data are shown in Table 1. \\
 \begin{table}
 \begin{center}
 \begin{tabular}{|l|c|}
 \hline
-Method & Frobnability \\
+Point & number \\
 \hline\hline
-Theirs & Frumpy \\
-Yours & Frobbly \\
-Ours & Makes one's heart Frob\\
+(level 1 network training data) & 2140\\
+(level 2 network training data) & \\
+left\_eye\_center & 7039 \\
+right\_eye\_center & 7036 \\
+left\_eye\_inner\_corner & 2271 \\
+left\_eye\_outer\_corner & 2267 \\
+right\_eye\_inner\_corner & 2268 \\
+right\_eye\_outer\_corner & 2268 \\
+left\_eyebrow\_inner\_end & 2270\\
+left\_eyebrow\_outer\_end & 2225\\
+right\_eyebrow\_inner\_end & 2270 \\
+right\_eyebrow\_outer\_end & 2236 \\
+nose\_tip & 7049 \\
+mouth\_left\_corner & 2269 \\
+mouth\_right\_corner & 2270 \\
+mouth\_center\_top\_lip & 2275\\
+mouth\_center\_bottom\_lip & 7016\\
+(test data) & 1783 \\ 
 \hline
 \end{tabular}
 \end{center}
 \caption{Results.   Ours is better.}
 \end{table}
 
-%-------------------------------------------------------------------------
-\subsection{Illustrations, graphs, and photographs}
+In the training data, we use 400 samples for validation, and others for training. \\
 
-All graphics should be centered.  Please ensure that any point you wish to
-make is resolvable in a printed copy of the paper.  Resize fonts in figures
-to match the font in the body text, and choose line widths which render
-effectively in print.  Many readers (and reviewers), even of an electronic
-copy, will choose to print your paper in order to read it.  You cannot
-insist that they do otherwise, and therefore must not assume that they can
-zoom in to see tiny details on a graphic.
+\textbf{Single convolutional network} The cost and RMSE is shown in Figure 4 and 5. The prblem is that it gives almost same coordinates for one type of points, that is, a constant whatever the input bitmap is in the training data. Studying deep into the level 1 network, we find that the constant comes from the value of b in the last fully-connected layer, and the output of each individual convolutional layer is almost a matrix of zeros. Increasing the deviation standard in the initializing parameters part will make the shift around the constant large. As we train the 15 different types of points together, it is kind of difficult to satisfy all with the same kernal blocks in the convolutional layer, so it can easily drop into this local minimum. \\
+%
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\linewidth]{cnn_large_cost.eps}
+\caption{The accuracy of validation data in CNN.(10000 iters)}
+\label{fig:long}
+\label{fig:onecol}
+\end{figure}
 
-When placing figures in \LaTeX, it's almost always best to use
-\verb+\includegraphics+, and to specify the  figure width as a multiple of
-the line width as in the example below
-{\small\begin{verbatim}
-   \usepackage[dvips]{graphicx} ...
-   \includegraphics[width=0.8\linewidth]
-                   {myfile.eps}
-\end{verbatim}
-}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\linewidth]{cnn_large_rmse.eps}
+\caption{The accuracy of validation data in CNN.(10000 iters)}
+\label{fig:long}
+\label{fig:onecol}
+\end{figure}
 
+Also we have tried to remove the shifting value b in the last fully-connected layer. And the result RMSE is $4.31$ in the test data after about 500 iterators. It is also a good choice. \\
 
-%-------------------------------------------------------------------------
-\subsection{Color}
+\textbf{Cascaded convolutional network} From the knowledge of the single convolutional network we get that the level 1 network need not to be so deep, so we concentrate on the level 2 networks. As we can see in Table 1, we train the level 1 network with the common 2140 bitmaps with all 15 types of points given. Of course we almost get a contant coordinate for one type of points. And the distance between the real points and the contant coordinate is less than 25. So we make the size of subgraphs as 50*50. \\
 
-Please refer to the author guidelines on the CVPR 2015 web page for a discussion
-of the use of color in your document.
+The result is that it works well for the first several points with RMSE around 2.3. But it gets worse later with RMSE more than 3.5. \\
 
-%------------------------------------------------------------------------
-\section{Final copy}
+\textbf{MLP} MLP is a very simple network, but works well in this problem. The best result in all our submission is from MLP, with RMSE 3.73126, ranked 59 out of 127 teams. \\
+We try MLP with and without dropout and the results are shown in Figure 6-9. The MLP without validation has a less RMSE, but the difference between training cost and validation cost is much large, meaning that the MLP without dropout can be easier to get overfitted.\\
 
-You must include your signed IEEE copyright release form when you submit
-your finished paper. We MUST have this form before your paper can be
-published in the proceedings.
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\linewidth]{MLP_cost.eps}
+\caption{The cost of traing data and validation data in MLP.(10000 iters)}
+\label{fig:long}
+\label{fig:onecol}
+\end{figure}
 
-\end{comment}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\linewidth]{MLP_RMSE.eps}
+\caption{The accuracy of validation data in MLP.(10000 iters)}
+\label{fig:long}
+\label{fig:onecol}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\linewidth]{mlp_dropout_cost.eps}
+\caption{The accuracy of validation data in MLP.(10000 iters)}
+\label{fig:long}
+\label{fig:onecol}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\linewidth]{mlp_dropout_rmse.eps}
+\caption{The accuracy of validation data in MLP.(10000 iters)}
+\label{fig:long}
+\label{fig:onecol}
+\end{figure}
+
+\section{Conclusion}
+In the above, we show our experiment result using several different neural net model to predict
+location of facial key points. We stuck to a MSE of about 4.1 and have no truely improvement.
+
+The convolutional net we used is considerably large, almost at the same scale for image-net classification
+of \cite{krizhevsky2012imagenet}, but it even have not a single improvement compare to a very simple
+three-layer MLP.
+
+We have done many research on initialization method, and choose one that widely accepted as useful even when
+training very deep neural net. But those state-of-art method can't event have a tiny improvement on my model
+when training this task.
+
+When faced with overfitting problem, we first implement regularization and lastly dropout. As we can observe,
+dropout can dramatically reduce overfitting at the early stage of training. However when epochs went large,
+it overfit as usual.
+
+A simple MLP training for amazing 10000 epochs even have a better performance than a deep convolution layer.
+And add dropout to MLP suddenly reduce its performance to the level of CNN.
+
+As far as I'm concern, I have already tried the widely-accepted advanced techniques to my model, but they all
+stuck to a certain point. I guess that the training dataset itself is not well labeled, and a convolution net
+designed for accurate image processing can't fit all the errors in the label. While the MLP tend to overfit to
+the training set, i.e. to the error labeled data. Since convolution net and dropout all reduce the overfitting,
+so they can't achieve the same performance as the MLP.
 
 {\small
 \bibliographystyle{ieee}
