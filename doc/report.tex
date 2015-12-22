@@ -226,6 +226,23 @@ However, it is not clear if this provides a consistent improvement and it is mor
 simply use 0 bias initialization\cite{cs231nInit}.
 
 \subsection{Dropout}
+Modern deep neural network frequently use a method called \emph{Dropout}
+to reduce overfitting\cite{srivastava2014dropout},
+Which randomly disable a portion of neuron unit at each propagation. So with every input, the neural
+network samples a different architectures\cite{krizhevsky2012imagenet}, which is similar to train many
+different models and use their average as the final prediction result.
+
+For implementation details, we use a Hinton's style dropout\cite{hinton2012improving}.
+For each dropout layer we assign a probability $p$, which stand for the approximate percentage of
+neuron to be disabled. We calculate a \emph{retain probability} with:
+$$
+retain_p = 1 - p
+$$
+and multiply the input with a binomial distribution with $p=retain_p$, and the re-normalize the result
+by dividing $retain_p$ as output.
+
+In our implementation, we add a dropout layer after each full connected layer except for the last layer,
+and with $p=0.5$.
 
 \section{Network Structure}
 
