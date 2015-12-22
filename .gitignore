@@ -5,3 +5,8 @@
 *.pyc
 *.swp
 *.zip
+*.aux
+*.bbl
+*.blg
+*.log
+*.synctex.gz
