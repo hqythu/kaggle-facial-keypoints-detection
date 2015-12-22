@@ -41,7 +41,7 @@ class Model():
         for reg in self.regularization_param:
             reg_cost = reg_cost + self.regularization * reg
 
-        self.label_predict = self.test_output #T.argmax(self.output, axis=1)
+        self.label_predict = T.argmax(self.test_output, axis=1)
 
         self.params_update = [theano.shared(param.get_value() * 0) for param in self.params]
         updates = [(param, param - self.learning_rate * param_update)
@@ -65,8 +65,7 @@ class Model():
             for start, end in zip(range(0, len(train_x), self.batch_size),
                 range(self.batch_size, len(train_x), self.batch_size)):
                 cost += [self.train(train_x[start:end], train_y[start:end])]
-            tmp = self.predict(valid_x) - valid_y
-            accuracy = np.sqrt(np.mean(tmp * tmp)) * 48
+            accuracy = np.mean(np.argmax(test_y, axis=1) == self.predict(test_x))
             valid_cost = self.cost_fun(valid_x, valid_y)
             if ((i+1) % self.disp_freq == 0):
                 print 'training cost:', np.mean(cost), ',', 'validation cost:', valid_cost, \
