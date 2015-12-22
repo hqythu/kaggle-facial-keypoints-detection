@@ -97,10 +97,49 @@ predicted result to Kaggle for score.
 Performance is graded by MSE(mean square error) for those 30 real values. A lower
 MSE indicate a better prediction.
 
+In our work, we have carried out experiment on several models, include basic multilayer
+perceptron, convolutional neural network and cascaded convolutional network.
+
 
 \section{Related Work}
 
 \section{Technical Approach}
+In this section we demonstrate some technical approach which, based on previous
+work, can improve performance of the network, accelerate convergence, and reduce
+overfitting.
+
+\subsection{Data Normalization}
+In the original training data, each pixel is represented by an integer from 0 to 255,
+and the real-value label range from 0 to 96. This large range of input and target data
+may force the neuron to saturate, which slow down convergence. Also, the non-error-centered
+target value make the full connected layer hard to get a ideal output.
+
+In our implementation, gray scale from 0 to 255 are divided by 256, rescaled to range 0 to 1,
+and target value are rescaled and zero centered to range from -1 to 1. Let train\_x, train\_y
+stand for the image data and label, the normalize preprocess looks like:
+$$
+	\begin{aligned}
+		train\_x &= \frac{train\_x}{256.0} \\
+		train\_y &= \frac{train\_y - 48.0}{48.0}
+	\end{aligned}
+$$
+
+\subsection{ReLU Nonlinearity}
+When training deep feedforward neural network, gradient diminishing when back propagation
+often occurs and make it very slow to converge. This issue is common when using sigmoid-like
+activation function, since they have a so-called saturation regime where gradient almost vanished.
+According to experiment by Glorot \cite{glorot2010understanding}, for a feedforward neural net
+with 4 layers and activate with sigmoid function, the last hidden layer quickly saturate with
+output value of 0, which slow down the process of learning. and after a hundred of epochs,
+it escaped, and the followed layer began to saturate.
+
+Glorot hypothesize that this behavior is the result of combination of random initialization
+and the fact that an output of zero correspond to a saturated sigmoid. Unsupervised pre-training
+can successfully solve this issue.
+
+\subsection{Weight Initialization}
+
+\subsection{Dropout}
 
 \section{Network Structure}
 
