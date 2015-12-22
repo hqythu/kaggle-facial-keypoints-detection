@@ -6,6 +6,7 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{verbatim}
 
 % Include other packages here, before hyperref.
 
@@ -21,7 +22,7 @@
 
 % Pages are numbered in submission mode, and unnumbered in camera-ready
 %\ifcvprfinal\pagestyle{empty}\fi
-\setcounter{page}{4321}
+%\setcounter{page}{4321}
 \begin{document}
 
 %%%%%%%%% TITLE
@@ -57,12 +58,58 @@ Tsinghua University\\
 %%%%%%%%% BODY TEXT
 \section{Introduction}
 
-Please follow the steps outlined below when submitting your manuscript to
-the IEEE Computer Society Press.  This style guide now has several
-important modifications (for example, you are no longer warned against the
-use of sticky tape to attach your artwork to the paper), so all authors
-should read this new version.
+This task comes originally from Kaggle\footnote{https://www.kaggle.com/},
+a online website holding many data science competitions. It's aim is to
+determine the location of several certain key points on face, given a photograph
+contains a human face.
 
+This key points detection can form the building block for many applications. Such as:
+	\begin{itemize}
+		\item[*] tracking faces in images and video
+		\item[*] analysing facial expressions
+		\item[*] detecting dysmorphic facial signs for medical diagnosis
+		\item[*] biometrics / face recognition
+	\end{itemize}
+Detecing facial keypoints is a very challenging problem. 
+Facial features vary greatly from one individual to another,
+and even for a single individual, there is a large amount of variation
+due to 3D pose, size, position, viewing angle, and illumination conditions.
+Computer vision research has come a long way in addressing these difficulties,
+but there remain many opportunities for improvement.
+
+In this specific competition\footnote{https://www.kaggle.com/c/facial-keypoints-detection}, 
+we are required to localize 15 facial key points given a images. Each predicted point
+is specified as $(x,y)$ real-valued pair in the space of pixel indices.
+The 15 keypoints is: 
+
+left\_eye\_center, right\_eye\_center, left\_eye\_inner\_corner, left\_eye\_outer\_corner, right\_eye\_inner\_corner, right\_eye\_outer\_corner, left\_eyebrow\_inner\_end, left\_eyebrow\_outer\_end, right\_eyebrow\_inner\_end, right\_eyebrow\_outer\_end, nose\_tip, mouth\_left\_corner, mouth\_right\_corner, mouth\_center\_top\_lip, mouth\_center\_bottom\_lip
+
+so 30 real value is going to be predicted for each input image.
+
+Kaggle given a training data set of 7049 image with size of $96*96$,
+color is gray scale and represented as an integer from 0 to 255 for each
+pixel. And each training images is labeled with 30 real value for position of the 
+15 key points. In some examples, some of the target keypoint positions are misssing.
+
+Also, a test set of 1783 images without label is given, for competitors to submit their
+predicted result to Kaggle for score.
+
+Performance is graded by MSE(mean square error) for those 30 real values. A lower
+MSE indicate a better prediction.
+
+
+\section{Related Work}
+
+\section{Technical Approach}
+
+\section{Network Structure}
+
+\section{Experiment}
+
+\section{Conclusion}
+
+\begin{comment}
+\section{Introduction}
 %-------------------------------------------------------------------------
 \subsection{Language}
 
@@ -433,6 +480,7 @@ You must include your signed IEEE copyright release form when you submit
 your finished paper. We MUST have this form before your paper can be
 published in the proceedings.
 
+\end{comment}
 
 {\small
 \bibliographystyle{ieee}
