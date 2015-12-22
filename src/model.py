@@ -65,7 +65,7 @@ class Model():
             for start, end in zip(range(0, len(train_x), self.batch_size),
                 range(self.batch_size, len(train_x), self.batch_size)):
                 cost += [self.train(train_x[start:end], train_y[start:end])]
-            accuracy = np.mean(np.argmax(test_y, axis=1) == self.predict(test_x))
+            accuracy = np.mean(np.argmax(valid_y, axis=1) == self.predict(valid_x))
             valid_cost = self.cost_fun(valid_x, valid_y)
             if ((i+1) % self.disp_freq == 0):
                 print 'training cost:', np.mean(cost), ',', 'validation cost:', valid_cost, \
